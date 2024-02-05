@@ -12,11 +12,9 @@ const kafka = new Kafka({
 const consumer = kafka.consumer({ groupId: "product-catalog-group" });
 
 const handleUserLoggedInEvent = async ({ message }) => {
-  const { userId, username } = JSON.parse(message.value);
+  const { userId } = JSON.parse(message.value);
 
-  console.log(
-    `User ${username} (ID: ${userId}) logged in. Updating product catalog.`
-  );
+  console.log(`User with id ${userId} logged out. Updating product catalog.`);
 };
 
 const run = async () => {

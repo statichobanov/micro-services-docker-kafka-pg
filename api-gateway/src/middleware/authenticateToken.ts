@@ -6,7 +6,8 @@ import jwt from "jsonwebtoken";
 const authorizationPaths = ["/authentication/logout"];
 
 function authenticateToken(req: Request, res: Response, next: NextFunction) {
-  if (authorizationPaths.includes(req.path)) {
+  console.log(req.path);
+  /* if (authorizationPaths.includes(req.path)) {
     const authHeader = req.headers["authorization"];
     const accessToken = authHeader && authHeader.split(" ")[1];
 
@@ -23,10 +24,9 @@ function authenticateToken(req: Request, res: Response, next: NextFunction) {
       (req as any).user = user;
       next();
     });
-  } else {
-    // Skip token validation for other routes
-    next();
-  }
+  } else { */
+  // Skip token validation for other routes
+  next();
 }
 
 export default authenticateToken;

@@ -2,6 +2,7 @@ import passport from "passport";
 import { Request, Response, NextFunction } from "express";
 import AuthInteractor from "../interactors/AuthInteractor";
 import UserInteractor from "../interactors/UserInteractor";
+import KafkaProducer from "../providers/KafkaProvider";
 
 export interface AuthenticatedRequest extends Request {
   accessToken?: string;
@@ -11,10 +12,16 @@ export interface AuthenticatedRequest extends Request {
 class AuthController {
   private userInteractor: UserInteractor;
   private authInteractor: AuthInteractor;
+  private kafkaProducer: KafkaProducer;
 
-  constructor(userInteractor: UserInteractor, authInteractor: AuthInteractor) {
+  constructor(
+    userInteractor: UserInteractor,
+    authInteractor: AuthInteractor,
+    kafkaProducer: KafkaProducer
+  ) {
     this.userInteractor = userInteractor;
     this.authInteractor = authInteractor;
+    this.kafkaProducer = kafkaProducer;
   }
 
   async register(req: Request, res: Response): Promise<void> {
@@ -47,10 +54,10 @@ class AuthController {
             .status(401)
             .json({ message: err || "Authentication failed" });
         }
-        console.log("AuthController /login: ", user);
+
         const accessToken = this.authInteractor.generateAccessToken(user);
         const refreshToken = this.authInteractor.generateRefreshToken(user);
-        console.log("AuthController /login accessToken: ", accessToken);
+
         await this.authInteractor.saveRefreshToken({
           userId: user.id,
           token: refreshToken,
@@ -87,6 +94,18 @@ class AuthController {
     try {
       await this.authInteractor.deleteAllRefreshTokens({
         userId: req.user.id,
+      });
+      console.log("/logout USER: ", req.user);
+      await this.kafkaProducer.sendMessage({
+        topic: "user-events",
+        messages: [
+          {
+            value: JSON.stringify({
+              eventType: "UserLoggedOut",
+              userId: req.user.id,
+            }),
+          },
+        ],
       });
 
       res.status(200).json({ message: "Logout successful" });

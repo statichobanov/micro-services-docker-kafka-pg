@@ -6,13 +6,22 @@ import AuthController, {
 } from "../controllers/AuthController";
 import AuthInteractor from "../interactors/AuthInteractor";
 import UserInteractor from "../interactors/UserInteractor";
+import KafkaProducer from "../providers/KafkaProvider";
 
 class ExpressAdapter {
   private authController: AuthController;
   private authMiddleware: AuthMiddleware;
 
-  constructor(userInteractor: UserInteractor, authInteractor: AuthInteractor) {
-    this.authController = new AuthController(userInteractor, authInteractor);
+  constructor(
+    userInteractor: UserInteractor,
+    authInteractor: AuthInteractor,
+    kafkaProducer: KafkaProducer
+  ) {
+    this.authController = new AuthController(
+      userInteractor,
+      authInteractor,
+      kafkaProducer
+    );
     this.authMiddleware = new AuthMiddleware(authInteractor);
 
     /* Initialize Passport local strategy config */
@@ -23,13 +32,15 @@ class ExpressAdapter {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
-    app.post("/register", (req, res) => this.authController.register(req, res));
-    app.post("/login", (req, res, next) =>
+    app.post("/authentication/register", (req, res) =>
+      this.authController.register(req, res)
+    );
+    app.post("/authentication/login", (req, res, next) =>
       this.authController.login(req, res, next)
     );
 
     app.get(
-      "/protected",
+      "/authentication/protected",
       this.authMiddleware.authenticateToken.bind(this.authMiddleware) as any,
       (req, res, next) => {
         this.authController.protected(req as AuthenticatedRequest, res);
@@ -37,7 +48,7 @@ class ExpressAdapter {
     );
 
     app.post(
-      "/logout",
+      "/authentication/logout",
       this.authMiddleware.authenticateToken.bind(this.authMiddleware) as any,
       (req, res, next) => {
         this.authController.logout(req as AuthenticatedRequest, res);
