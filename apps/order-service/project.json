@@ -1,0 +1,24 @@
+{
+  "name": "order-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/order-service/src",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "order-service:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "order-service:build:development"
+        },
+        "production": {
+          "buildTarget": "order-service:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}

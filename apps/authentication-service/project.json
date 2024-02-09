@@ -1,0 +1,24 @@
+{
+  "name": "authentication-service",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/authentication-service/src",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "authentication-service:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "authentication-service:build:development"
+        },
+        "production": {
+          "buildTarget": "authentication-service:build:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}
