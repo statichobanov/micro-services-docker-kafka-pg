@@ -19,7 +19,7 @@ services:
       KAFKA_LISTENERS: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:9093
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "user-events:1:1,order-events:1:1,product-events:1:1"
+      KAFKA_CREATE_TOPICS: "product-quantity-add:1:1,product-quantity-remove:1:1"
     networks:
       - kafka-net
 
@@ -67,6 +67,24 @@ services:
       - authentication-service
       - product-catalog-service
       - order-service
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    command: ["postgres", "-c", "log_statement=all"]
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kafka-net
+
+volumes:
+  postgres_data:
 
 networks:
   kafka-net:

@@ -20,10 +20,10 @@ const orderServiceProxy = createProxyMiddleware({
   changeOrigin: true,
 });
 
-// Use the proxies based on the path
+/* Use the proxies based on the path */
 app.use("/authentication", authenticateToken, authenticationServiceProxy);
-app.use("/product-catalog", productCatalogServiceProxy);
-app.use("/order", orderServiceProxy);
+app.use("/product-catalog", authenticateToken, productCatalogServiceProxy);
+app.use("/order", authenticateToken, orderServiceProxy);
 
 app.listen(PORT, () => {
   console.log(`API Gateway is running on http://localhost:${PORT}`);

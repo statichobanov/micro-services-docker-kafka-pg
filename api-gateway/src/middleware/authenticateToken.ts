@@ -1,32 +1,56 @@
-// api-gateway/authMiddleware.ts
-
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import JwtProvider from "../providers/JwtProvider.js";
+import envConfig from "../config/env.config.js";
+import getUserRefreshToken from "../util/getUserRefreshToken.js";
 
-const authorizationPaths = ["/authentication/logout"];
+const authorizationPaths = [
+  "/logout",
+  "/create",
+  "/delete",
+  "/update",
+  "/status-update",
+  "/get-all-users",
+];
 
-function authenticateToken(req: Request, res: Response, next: NextFunction) {
+async function authenticateToken(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  console.log("req.path", req.path);
+
   if (authorizationPaths.includes(req.path)) {
-    const authHeader = req.headers["authorization"];
-    const accessToken = authHeader && authHeader.split(" ")[1];
+    try {
+      const jwtProvider = new JwtProvider();
+      const accessToken = extractAccessToken(req);
 
-    if (!accessToken) {
-      return res.status(401).json({ message: "Missing Token" });
-    }
-
-    jwt.verify(accessToken, "secret", (err, user) => {
-      if (err) {
-        return res.status(403).json({ message: "Invalid access token" });
+      if (!accessToken) {
+        return res.status(401).json({ message: "Unauthorized" });
       }
 
-      // Attach user information to the request for further processing
-      (req as any).user = user;
+      const decoded = jwtProvider.verifyToken(
+        accessToken,
+        envConfig.ACCESS_TOKEN_SECRET
+      );
+
+      const userId = decoded.userId;
+
+      if (!(await getUserRefreshToken(userId))) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
       next();
-    });
+    } catch (error: any) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
   } else {
-    // Skip token validation for other routes
     next();
   }
+}
+
+function extractAccessToken(req: Request): string | undefined {
+  const authHeader = req.headers["authorization"];
+  return authHeader && authHeader.split(" ")[1];
 }
 
 export default authenticateToken;

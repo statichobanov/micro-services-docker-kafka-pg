@@ -1,47 +1,21 @@
-import express, { Request, Response } from "express";
-import { Kafka, Producer, ProducerRecord } from "kafkajs";
+import express from "express";
+
+import KafkaProducer from "./services/KafkaProducer";
+import ExpressAdapter from "./adapters/ExpressAdapter";
 
 const app = express();
 const port = 3004;
-let producer: Producer;
 
-// ... Other authentication logic ...
+async function startServer(): Promise<void> {
+  const kafkaProducer = new KafkaProducer();
+  await kafkaProducer.connect();
+  const expressAdapter = new ExpressAdapter(kafkaProducer);
 
-const kafka = new Kafka({
-  clientId: "order-service",
-  brokers: ["kafka:9092"],
-});
+  expressAdapter.initConfigs(app);
 
-producer = kafka.producer();
+  app.listen(port, () => {
+    console.log(`Authentication Service listening at http://localhost:${port}`);
+  });
+}
 
-console.log("Producer connected");
-
-app.get("/order/create", async (req: Request, res: Response) => {
-  console.log("Order create route hit");
-
-  const message: ProducerRecord = {
-    topic: "order-events",
-    messages: [
-      {
-        value: JSON.stringify({
-          eventType: "NewOrder",
-          userId: "user.id",
-          username: "user.username",
-        }),
-      },
-    ],
-  };
-
-  await producer.send(message);
-
-  res.status(200).json({ message: "Login successful" });
-});
-
-app.listen(port, () => {
-  console.log(`Authentication Service listening at http://localhost:${port}`);
-});
-
-producer
-  .connect()
-  .then(() => console.log("Producer connected"))
-  .catch((error) => console.error("Producer connection error:", error));
+startServer();

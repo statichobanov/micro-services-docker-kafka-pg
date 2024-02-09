@@ -1,19 +1,23 @@
+# Use an official Node runtime as a parent image
 FROM node:16
 
-# RUN apt-get update && \
-#     apt-get install -y netcat && \
-#     rm -rf /var/lib/apt/lists/*
-
+# Set the working directory
 WORKDIR /app
 
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
+# Install app dependencies
 RUN npm install
 
+# Bundle app source
 COPY . .
 
+# Compile TypeScript code
+RUN npm run build
+
+# Expose the port
 EXPOSE 3001
 
-CMD ["node", "app.js"]
-
-# CMD ["./wait-for-kafka.sh", "kafka:9093", "node", "app.js"]
+# Define the command to run your app
+CMD ["npm", "start"]
