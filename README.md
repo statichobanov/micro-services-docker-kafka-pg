@@ -36,6 +36,10 @@ This documentation provides information about the endpoints available in the Yar
 
 ![Yara assignment Db Shema image:](https://github.com/statichobanov/hidden-repository/blob/bf1a883f04cfdaf9430ae7aaee4eaf6ee30f13be/db_admin/db_scema/db_diagram.png "yara_assignment Db shema")
 
+# Testing
+
+- **Unit tests**: Available only for product-catalog-service: To execute the tests locally, navigate to the product-catalog-service folder, install dependencies by running npm i, and subsequently execute the tests using npm run test.
+
 # Endpoints
 
 ## Authentication Service
