@@ -34,7 +34,7 @@ This documentation provides information about the endpoints available in the Yar
 
 # Database
 
-![Yara assignment Db Shema image:](https://github.com/statichobanov/hidden-repository/blob/bf1a883f04cfdaf9430ae7aaee4eaf6ee30f13be/db_admin/db_scema/db_diagram.png "yara_assignment Db shema")
+![Yara assignment Db Shema image:](https://github.com/statichobanov/SeniorBackendDevTest/blob/70ea3f6812ab2cd745d468afac5b0b368b96838c/db_admin/db_scema/db_diagram.png "yara_assignment Db shema")
 
 # Testing
 
