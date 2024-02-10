@@ -17,6 +17,4 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-EXPOSE 3002
-
 CMD ["nx", "serve", "product-catalog-service"]
