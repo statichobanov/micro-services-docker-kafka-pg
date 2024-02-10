@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "module": "commonjs",
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "../../authentication-service-e2e/jest.config.ts",
+    "../../authentication-service-e2e/src/**/*.ts"
+  ]
+}

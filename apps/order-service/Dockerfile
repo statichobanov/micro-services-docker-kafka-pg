@@ -17,7 +17,6 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-EXPOSE 3004
 
 CMD ["nx", "serve", "order-service"]
 

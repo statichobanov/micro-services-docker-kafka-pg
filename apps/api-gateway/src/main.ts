@@ -6,35 +6,26 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
-import { AppModule } from './app/app.module';
-import { createProxyMiddleware } from 'http-proxy-middleware';
-
-import authenticateToken from './app/middleware/authenticateToken';
+import { ApiGatewayModule } from './app/infraestructure/controllers/apiGateway.module';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(ApiGatewayModule);
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        clientId: 'api-gateway',
+        brokers: ['kafka:9092'],
+      },
+      consumer: {
+        groupId: 'api-gateway-consumer',
+      },
+    },
+  });
+  await app.startAllMicroservices();
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
-
-  const authenticationServiceProxy = createProxyMiddleware({
-    target: 'http://authentication-service:3001',
-    changeOrigin: true,
-  });
-
-  const productCatalogServiceProxy = createProxyMiddleware({
-    target: 'http://product-catalog-service:3002',
-    changeOrigin: true,
-  });
-
-  const orderServiceProxy = createProxyMiddleware({
-    target: 'http://order-service:3004',
-    changeOrigin: true,
-  });
-
-  // Use the proxies based on the path
-  app.use('/authentication', authenticateToken, authenticationServiceProxy);
-  app.use('/product-catalog', productCatalogServiceProxy);
-  app.use('/order/create', orderServiceProxy);
 
   const port = process.env.PORT || 3003;
   await app.listen(port);

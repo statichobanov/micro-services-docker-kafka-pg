@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "module": "commonjs",
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "../../order-service-e2e/jest.config.ts",
+    "../../order-service-e2e/src/**/*.ts"
+  ]
+}

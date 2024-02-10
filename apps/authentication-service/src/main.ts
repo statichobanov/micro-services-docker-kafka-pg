@@ -6,12 +6,12 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
-import { AppModule } from './app/app.module';
+import { AuthenticationModule } from './app/infraestructure/controllers/authentication.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
+    AuthenticationModule,
     {
       transport: Transport.KAFKA,
       options: {
@@ -19,11 +19,14 @@ async function bootstrap() {
           clientId: 'authentication-service',
           brokers: ['kafka:9092'],
         },
+        consumer: {
+          groupId: 'authentication-service-consumer',
+        },
       },
     }
   );
   await app.listen();
-  Logger.log(`🚀 Application is running on: http://localhost`);
+  Logger.log(`🚀 Authentication Service is running`);
 }
 
 bootstrap();
