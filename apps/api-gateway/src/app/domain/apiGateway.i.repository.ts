@@ -5,7 +5,7 @@ export interface ApiGatewayIRepository {
   getProduct(id: string);
   createProduct(product: ProductModel);
   updateProduct(product: ProductModel);
-  removeProduct(product: ProductModel);
+  removeProduct(id: string);
   authenticate(user);
   createOrder(order);
 }

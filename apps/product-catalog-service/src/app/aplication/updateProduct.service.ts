@@ -1,4 +1,4 @@
-import { Product } from '../domain/models/product.entity';
+import { Product } from '@ecommerce/models';
 import { ProductCatalogIRepository } from '../domain/productCatalog.i.repository';
 
 export class UpdateProduct {

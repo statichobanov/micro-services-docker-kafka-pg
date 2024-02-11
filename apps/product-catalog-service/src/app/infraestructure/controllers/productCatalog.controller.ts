@@ -20,7 +20,7 @@ export class ProductCatalogController implements OnModuleInit {
 
   @MessagePattern('product-events')
   async handleProductEvents(@Payload() message) {
-    Logger.log({ message });
+    Logger.log('Message', { message });
     switch (message.type) {
       case 'get-list':
         return await this.getProductCatalog.run();
@@ -31,13 +31,13 @@ export class ProductCatalogController implements OnModuleInit {
       case 'update-product':
         return await this.updateProduct.run(message.data);
       case 'remove-product':
-        return await this.removeProduct.run(message.data);
+        return await this.removeProduct.run(message.data.id);
     }
   }
 
   @EventPattern('user-events')
   handleUserLoggedInEvent(@Payload() message) {
-    Logger.log({ message });
+    Logger.log('Event', { message });
   }
 
   onModuleInit() {

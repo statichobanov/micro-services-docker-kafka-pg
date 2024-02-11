@@ -1,11 +1,28 @@
-import { Logger } from '@nestjs/common';
+import { Inject, Logger, NotFoundException } from '@nestjs/common';
 import { ProductCatalogIRepository } from '../../domain/productCatalog.i.repository';
-import { Product } from '../../domain/models/product.entity';
+import { Product } from '@ecommerce/models';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ClientKafka } from '@nestjs/microservices';
 
 export class ProductCatalogRepository implements ProductCatalogIRepository {
-  constructor(@InjectRepository(Product) private productsRepository: Repository<Product>) {}
+  constructor(
+    @Inject(`KAFKA_CLIENT`) private readonly kafkaClient: ClientKafka,
+    @InjectRepository(Product) private productsRepository: Repository<Product>
+  ) {}
+
+  async getProduct(id: string) {
+    try {
+      const product = await this.productsRepository.findOneBy({ id: +id });
+      if (product) {
+        return JSON.stringify(product);
+      } else {
+        throw new NotFoundException();
+      }
+    } catch (error) {
+      Logger.error(error);
+    }
+  }
 
   async getProductCatalog(): Promise<string> {
     try {
@@ -25,28 +42,33 @@ export class ProductCatalogRepository implements ProductCatalogIRepository {
     }
   }
 
-  async getProduct(id: string) {
+  async updateProduct(product: Product): Promise<string> {
     try {
-      const product = await this.productsRepository.findOneBy({ id: +id });
-      return JSON.stringify(product);
+      const result = await this.productsRepository.update(product.id, product);
+      if (result.affected > 0) {
+        const message = JSON.stringify({
+          type: 'product-updated',
+          data: product,
+        });
+        this.kafkaClient.emit('product-events', message);
+        return JSON.stringify({ result: 'ok' });
+      } else {
+        throw new NotFoundException();
+      }
     } catch (error) {
       Logger.error(error);
     }
   }
 
-  async updateProduct(product: Product) {
+  async removeProduct(id: string): Promise<string> {
     try {
-      const response = await this.productsRepository.update(product.id, product);
-      return JSON.stringify(response);
-    } catch (error) {
-      Logger.error(error);
-    }
-  }
-
-  async removeProduct(product: Product) {
-    try {
-      const response = await this.productsRepository.delete(product);
-      return JSON.stringify(response);
+      const result = await this.productsRepository.delete(id);
+      // TODO: Implements event to update order
+      if (result.affected > 0) {
+        return JSON.stringify({ result: 'ok' });
+      } else {
+        throw new NotFoundException();
+      }
     } catch (error) {
       Logger.error(error);
     }
