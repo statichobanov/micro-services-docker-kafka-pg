@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
-
-import { ApiGatewayController } from './apiGateway.controller';
-import { CreateOrder } from '../../aplication/createOrder.service';
-import { ApiGatewayIRepository } from '../../domain/apiGateway.i.repository';
-import { ApiGatewayKafkaRepository } from '../repositories/apiGatewayKafka.repository';
-import { Authenticate } from '../../aplication/authenticate.service';
-import { GetProductCatalog } from '../../aplication/getProductCatalog.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { Authenticate } from '../../aplication/authenticate.service';
+import { CreateOrder } from '../../aplication/createOrder.service';
+import { CreateProduct } from '../../aplication/createProduct.service';
+import { GetProduct } from '../../aplication/getProduct.service';
+import { GetProductCatalog } from '../../aplication/getProductCatalog.service';
+import { RemoveProduct } from '../../aplication/removeProduct.service';
+import { UpdateProduct } from '../../aplication/updateProduct.service';
+import { ApiGatewayKafkaRepository } from '../repositories/appGatewayKafka.respository';
+import { ApiGatewayController } from './apiGateway.controller';
+import { ApiGatewayIRepository } from '../../domain/apiGateway.i.repository';
 
 @Module({
   imports: [
@@ -16,11 +19,11 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: 'api-gateway',
+            clientId: 'api-gateway-product',
             brokers: ['kafka:9092'],
           },
           consumer: {
-            groupId: 'api-gateway-consumer',
+            groupId: 'api-gateway-product-consumer',
           },
         },
       },
@@ -30,9 +33,37 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   providers: [
     ApiGatewayKafkaRepository,
     {
-      provide: Authenticate,
+      provide: GetProductCatalog,
       useFactory(apiGatewayRepository: ApiGatewayIRepository) {
-        return new Authenticate(apiGatewayRepository);
+        return new GetProductCatalog(apiGatewayRepository);
+      },
+      inject: [ApiGatewayKafkaRepository],
+    },
+    {
+      provide: GetProduct,
+      useFactory(apiGatewayRepository: ApiGatewayIRepository) {
+        return new GetProduct(apiGatewayRepository);
+      },
+      inject: [ApiGatewayKafkaRepository],
+    },
+    {
+      provide: CreateProduct,
+      useFactory(apiGatewayRepository: ApiGatewayIRepository) {
+        return new CreateProduct(apiGatewayRepository);
+      },
+      inject: [ApiGatewayKafkaRepository],
+    },
+    {
+      provide: UpdateProduct,
+      useFactory(apiGatewayRepository: ApiGatewayIRepository) {
+        return new UpdateProduct(apiGatewayRepository);
+      },
+      inject: [ApiGatewayKafkaRepository],
+    },
+    {
+      provide: RemoveProduct,
+      useFactory(apiGatewayRepository: ApiGatewayIRepository) {
+        return new RemoveProduct(apiGatewayRepository);
       },
       inject: [ApiGatewayKafkaRepository],
     },
@@ -44,9 +75,9 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       inject: [ApiGatewayKafkaRepository],
     },
     {
-      provide: GetProductCatalog,
+      provide: Authenticate,
       useFactory(apiGatewayRepository: ApiGatewayIRepository) {
-        return new GetProductCatalog(apiGatewayRepository);
+        return new Authenticate(apiGatewayRepository);
       },
       inject: [ApiGatewayKafkaRepository],
     },

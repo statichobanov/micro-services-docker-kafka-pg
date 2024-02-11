@@ -23,6 +23,21 @@ services:
     networks:
       - kafka-net
 
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: test123
+      MYSQL_DATABASE: ecommerce
+      MYSQL_USER: user
+      MYSQL_PASSWORD: test123
+    ports:
+      - '3306:3306'
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - kafka-net
+
   authentication-service:
     build:
       dockerfile: apps/authentication-service/Dockerfile
@@ -40,6 +55,7 @@ services:
       - kafka-net
     depends_on:
       - kafka
+      - mariadb
 
   order-service:
     build:
@@ -67,3 +83,6 @@ services:
 networks:
   kafka-net:
     driver: bridge
+
+volumes:
+  mariadb-data:
