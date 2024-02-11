@@ -1,5 +1,5 @@
 {
-  "name": "@ecomerce/source",
+  "name": "@ecommerce/source",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -14,13 +14,16 @@
     "@nestjs/core": "^10.0.2",
     "@nestjs/microservices": "^10.3.2",
     "@nestjs/platform-express": "^10.0.2",
+    "@nestjs/typeorm": "^10.0.2",
     "axios": "^1.6.0",
     "jsonwebtoken": "^9.0.2",
     "kafka-node": "^5.0.0",
     "kafkajs": "^2.2.4",
+    "mysql2": "^3.9.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@nestjs/schematics": "^10.0.1",
