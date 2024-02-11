@@ -5,6 +5,9 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CreateOrder } from '../../aplication/createOrder.service';
 import { OrderRepository } from '../repositories/order.repository';
 import { OrderIRepository } from '../../domain/order.i.repository';
+import { Order } from '@ecommerce/models';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UpdateOrder } from '../../aplication/updateOrder.service';
 
 @Module({
   imports: [
@@ -23,6 +26,7 @@ import { OrderIRepository } from '../../domain/order.i.repository';
         },
       },
     ]),
+    TypeOrmModule.forFeature([Order]),
   ],
   controllers: [OrderController],
   providers: [
@@ -31,6 +35,13 @@ import { OrderIRepository } from '../../domain/order.i.repository';
       provide: CreateOrder,
       useFactory(orderRepository: OrderIRepository) {
         return new CreateOrder(orderRepository);
+      },
+      inject: [OrderRepository],
+    },
+    {
+      provide: UpdateOrder,
+      useFactory(orderRepository: OrderIRepository) {
+        return new UpdateOrder(orderRepository);
       },
       inject: [OrderRepository],
     },

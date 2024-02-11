@@ -28,7 +28,6 @@ export class ApiGatewayController implements OnModuleInit {
   @ApiResponse({ status: 200, description: 'The product was found.', type: ProductModel })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   @Get('product')
-  @Get('product')
   async handleGetProduct(@Query() id: string): Promise<ProductModel> {
     return await this.getProduct.run(id);
   }
@@ -64,16 +63,12 @@ export class ApiGatewayController implements OnModuleInit {
 
   @ApiTags('product')
   @ApiOperation({ summary: 'Remove Product', description: 'Remove a product.' })
-  @ApiBody({ type: ProductModel })
+  @ApiQuery({ name: 'id', type: String, description: 'The ID of the product to retrieve.' })
   @ApiResponse({ status: 200, description: 'Product removed successfully.' })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   @Delete('product')
-  async handleRemoveProduct(@Body() body): Promise<{ result: string }> {
-    await this.removeProduct.run(body);
-
-    return {
-      result: 'ok',
-    };
+  async handleRemoveProduct(@Query() id: string): Promise<string> {
+    return await this.removeProduct.run(id);
   }
 
   @ApiTags('authentication')

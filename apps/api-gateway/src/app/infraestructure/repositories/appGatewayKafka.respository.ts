@@ -35,16 +35,16 @@ export class ApiGatewayKafkaRepository implements ApiGatewayIRepository, OnModul
 
   async updateProduct(product: ProductModel) {
     const message = JSON.stringify({
-      type: 'create-product',
+      type: 'update-product',
       data: product,
     });
     return await lastValueFrom(this.kafkaClient.send('product-events', message));
   }
 
-  async removeProduct(product: ProductModel) {
+  async removeProduct(id: string) {
     const message = JSON.stringify({
-      type: 'create-product',
-      data: product,
+      type: 'remove-product',
+      data: id,
     });
     return await lastValueFrom(this.kafkaClient.send('product-events', message));
   }

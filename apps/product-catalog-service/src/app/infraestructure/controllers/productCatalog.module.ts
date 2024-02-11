@@ -5,7 +5,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { GetProductCatalog } from '../../aplication/getProductCatalog.service';
 import { ProductCatalogRepository } from '../repositories/productCatalog.repository';
 import { ProductCatalogIRepository } from '../../domain/productCatalog.i.repository';
-import { Product } from '../../domain/models/product.entity';
+import { Product } from '@ecommerce/models';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GetProduct } from '../../aplication/getProduct.service';
 import { CreateProduct } from '../../aplication/createProduct.service';
