@@ -1,4 +1,4 @@
-import { ProductModel } from '../domain/models/product.model';
+import { ProductModel } from '@ecommerce/models';
 import { ApiGatewayIRepository } from '../domain/apiGateway.i.repository';
 
 export class UpdateProduct {

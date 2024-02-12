@@ -1,9 +1,9 @@
-import { Login } from '@ecommerce/models';
+import { User } from '@ecommerce/models';
 import { AuthenticationIRepository } from '../domain/authentication.i.repository';
 
-export class Authenticate {
+export class CreateUser {
   constructor(private authenticationRepository: AuthenticationIRepository) {}
-  async run(login: Login) {
-    return this.authenticationRepository.authenticate(login);
+  async run(user: User) {
+    return this.authenticationRepository.createUser(user);
   }
 }

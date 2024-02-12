@@ -15,7 +15,7 @@ export class Order {
   date: Date;
 
   @ManyToOne(() => User, (user) => user.orders)
-  user: number;
+  user: User;
 
   @Column('decimal')
   total: number;

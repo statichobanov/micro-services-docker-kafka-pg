@@ -2,7 +2,7 @@ import { Inject, OnModuleInit } from '@nestjs/common';
 import { ApiGatewayIRepository } from '../../domain/apiGateway.i.repository';
 import { ClientKafka } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
-import { ProductModel } from '../../domain/models/product.model';
+import { LoginModel, OrderModel, ProductModel, UserModel } from '@ecommerce/models';
 
 export class ApiGatewayKafkaRepository implements ApiGatewayIRepository, OnModuleInit {
   constructor(
@@ -49,15 +49,15 @@ export class ApiGatewayKafkaRepository implements ApiGatewayIRepository, OnModul
     return await lastValueFrom(this.kafkaClient.send('product-events', message));
   }
 
-  async authenticate(user) {
+  async authenticate(login: LoginModel) {
     const message = JSON.stringify({
       type: 'login',
-      data: user,
+      data: login,
     });
     return await lastValueFrom(this.kafkaClient.send('user-events', message));
   }
 
-  async createOrder(order) {
+  async createOrder(order: OrderModel) {
     const message = JSON.stringify({
       type: 'create-order',
       data: order,
@@ -65,6 +65,13 @@ export class ApiGatewayKafkaRepository implements ApiGatewayIRepository, OnModul
     return await lastValueFrom(this.kafkaClient.send('order-events', message));
   }
 
+  async createUser(user: UserModel) {
+    const message = JSON.stringify({
+      type: 'create-user',
+      data: user,
+    });
+    return await lastValueFrom(this.kafkaClient.send('user-events', message));
+  }
   onModuleInit() {
     this.kafkaClient.subscribeToResponseOf(`product-events`);
     this.kafkaClient.subscribeToResponseOf(`user-events`);
