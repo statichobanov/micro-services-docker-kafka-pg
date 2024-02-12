@@ -1,3 +1,4 @@
 export interface AuthenticationIRepository {
-  authenticate(user);
+  createUser(user);
+  authenticate(login);
 }

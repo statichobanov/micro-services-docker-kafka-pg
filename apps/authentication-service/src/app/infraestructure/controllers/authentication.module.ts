@@ -5,6 +5,11 @@ import { Authenticate } from '../../aplication/authenticate.service';
 import { AuthenticationRepository } from '../repositories/authentication.repository';
 import { AuthenticationIRepository } from '../../domain/authentication.i.repository';
 import { AuthenticationController } from './authentication.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './auth.constants';
+import { User } from '@ecommerce/models';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CreateUser } from '../../aplication/createUser.service';
 
 @Module({
   imports: [
@@ -23,6 +28,12 @@ import { AuthenticationController } from './authentication.controller';
         },
       },
     ]),
+    JwtModule.register({
+      global: true,
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '60s' },
+    }),
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthenticationController],
   providers: [
@@ -31,6 +42,13 @@ import { AuthenticationController } from './authentication.controller';
       provide: Authenticate,
       useFactory(authenticationRepository: AuthenticationIRepository) {
         return new Authenticate(authenticationRepository);
+      },
+      inject: [AuthenticationRepository],
+    },
+    {
+      provide: CreateUser,
+      useFactory(authenticationRepository: AuthenticationIRepository) {
+        return new CreateUser(authenticationRepository);
       },
       inject: [AuthenticationRepository],
     },

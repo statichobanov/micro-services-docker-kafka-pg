@@ -10,6 +10,7 @@ import { UpdateProduct } from '../../aplication/updateProduct.service';
 import { ApiGatewayKafkaRepository } from '../repositories/appGatewayKafka.respository';
 import { ApiGatewayController } from './apiGateway.controller';
 import { ApiGatewayIRepository } from '../../domain/apiGateway.i.repository';
+import { CreateUser } from '../../aplication/createUser.service';
 
 @Module({
   imports: [
@@ -78,6 +79,13 @@ import { ApiGatewayIRepository } from '../../domain/apiGateway.i.repository';
       provide: Authenticate,
       useFactory(apiGatewayRepository: ApiGatewayIRepository) {
         return new Authenticate(apiGatewayRepository);
+      },
+      inject: [ApiGatewayKafkaRepository],
+    },
+    {
+      provide: CreateUser,
+      useFactory(apiGatewayRepository: ApiGatewayIRepository) {
+        return new CreateUser(apiGatewayRepository);
       },
       inject: [ApiGatewayKafkaRepository],
     },

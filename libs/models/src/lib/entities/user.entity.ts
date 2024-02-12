@@ -10,6 +10,9 @@ export class User {
   name: string;
 
   @Column()
+  password: string;
+
+  @Column()
   email: string;
 
   @OneToMany(() => Order, (order) => order.user)

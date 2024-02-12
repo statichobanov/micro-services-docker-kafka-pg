@@ -8,7 +8,8 @@ import { ClientKafka } from '@nestjs/microservices';
 import { Authenticate } from '../../aplication/authenticate.service';
 import { CreateOrder } from '../../aplication/createOrder.service';
 import { ApiOperation, ApiTags, ApiResponse, ApiBody, ApiQuery } from '@nestjs/swagger';
-import { ProductModel } from '../../domain/models/product.model';
+import { LoginModel, OrderModel, ProductModel, UserModel } from '@ecommerce/models';
+import { CreateUser } from '../../aplication/createUser.service';
 @Controller('')
 export class ApiGatewayController implements OnModuleInit {
   constructor(
@@ -19,6 +20,7 @@ export class ApiGatewayController implements OnModuleInit {
     @Inject(RemoveProduct) private removeProduct: RemoveProduct,
     @Inject(Authenticate) private authenticate: Authenticate,
     @Inject(CreateOrder) private createOrder: CreateOrder,
+    @Inject(CreateUser) private createUser: CreateUser,
     @Inject(`KAFKA_CLIENT`) private readonly kafkaClient: ClientKafka
   ) {}
 
@@ -45,7 +47,7 @@ export class ApiGatewayController implements OnModuleInit {
   @ApiOperation({ summary: 'Create Product', description: 'Create a product.' })
   @ApiBody({ type: ProductModel })
   @ApiResponse({ status: 201, description: 'The product has been created successfully.', type: ProductModel })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
   @Post('product')
   async handleCreateProduct(@Body() body: ProductModel): Promise<{ result: string }> {
     return await this.createProduct.run(body);
@@ -54,7 +56,7 @@ export class ApiGatewayController implements OnModuleInit {
   @ApiTags('product')
   @ApiOperation({ summary: 'Update Product', description: 'Update a product.' })
   @ApiBody({ type: ProductModel, description: 'The payload to update a product.' })
-  @ApiResponse({ status: 200, description: 'Product updated successfully.', type: ProductModel })
+  @ApiResponse({ status: 200, description: 'Product updated successfully.' })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   @Put('product')
   async handleUpdateProduct(@Body() body: ProductModel): Promise<ProductModel> {
@@ -72,19 +74,29 @@ export class ApiGatewayController implements OnModuleInit {
   }
 
   @ApiTags('authentication')
+  @ApiOperation({ summary: 'Create User', description: 'Create an user.' })
+  @ApiBody({ type: UserModel })
+  @ApiResponse({ status: 200, description: 'User created successfully.', type: UserModel })
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @Post('auth')
+  handleCreateUser(@Body() body: UserModel) {
+    return this.createUser.run(body);
+  }
+
+  @ApiTags('authentication')
   @ApiOperation({ summary: 'Authenticate', description: 'Authenticate an user.' })
-  @ApiBody({ type: undefined }) // TODO: add type
-  @ApiResponse({ status: 200, description: 'User authenticated successfully.', type: undefined }) // TODO: add type
+  @ApiBody({ type: LoginModel })
+  @ApiResponse({ status: 200, description: 'User authenticated successfully.', type: Object })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @Post('auth') // TODO: Implement authenticateToken
-  handleAuthenticate() {
-    return this.authenticate.run({});
+  @Post('auth/login')
+  handleAuthenticate(@Body() body: LoginModel) {
+    return this.authenticate.run(body);
   }
 
   @ApiTags('order')
   @ApiOperation({ summary: 'Create Order', description: 'Create an order.' })
-  @ApiBody({ type: undefined }) // TODO: add type
-  @ApiResponse({ status: 201, description: 'Order created successfully.', type: undefined }) // TODO: add type
+  @ApiBody({ type: OrderModel })
+  @ApiResponse({ status: 201, description: 'Order created successfully.', type: OrderModel })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @Post('order')
   handleCreateOrder() {
