@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Login, User } from '@ecommerce/models';
 import * as bcrypt from 'bcryptjs';
+import { jwtConstants } from '../controllers/auth.constants';
 
 export class AuthenticationRepository implements AuthenticationIRepository {
   constructor(
@@ -40,5 +41,11 @@ export class AuthenticationRepository implements AuthenticationIRepository {
     } else {
       throw new UnauthorizedException();
     }
+  }
+
+  async verifyToken(token) {
+    this.jwtService.verifyAsync(token, {
+      secret: jwtConstants.secret,
+    });
   }
 }

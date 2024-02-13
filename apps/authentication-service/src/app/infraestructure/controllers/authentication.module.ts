@@ -10,6 +10,7 @@ import { jwtConstants } from './auth.constants';
 import { User } from '@ecommerce/models';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CreateUser } from '../../aplication/createUser.service';
+import { VerifyToken } from '../../aplication/verifyToken.service';
 
 @Module({
   imports: [
@@ -49,6 +50,13 @@ import { CreateUser } from '../../aplication/createUser.service';
       provide: CreateUser,
       useFactory(authenticationRepository: AuthenticationIRepository) {
         return new CreateUser(authenticationRepository);
+      },
+      inject: [AuthenticationRepository],
+    },
+    {
+      provide: VerifyToken,
+      useFactory(authenticationRepository: AuthenticationIRepository) {
+        return new VerifyToken(authenticationRepository);
       },
       inject: [AuthenticationRepository],
     },
