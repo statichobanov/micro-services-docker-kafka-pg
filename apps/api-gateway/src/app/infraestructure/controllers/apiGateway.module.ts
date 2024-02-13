@@ -7,7 +7,7 @@ import { GetProduct } from '../../aplication/getProduct.service';
 import { GetProductCatalog } from '../../aplication/getProductCatalog.service';
 import { RemoveProduct } from '../../aplication/removeProduct.service';
 import { UpdateProduct } from '../../aplication/updateProduct.service';
-import { ApiGatewayKafkaRepository } from '../repositories/appGatewayKafka.respository';
+import { ApiGatewayKafkaRepository } from '../repositories/apiGatewayKafka.respository';
 import { ApiGatewayController } from './apiGateway.controller';
 import { ApiGatewayIRepository } from '../../domain/apiGateway.i.repository';
 import { CreateUser } from '../../aplication/createUser.service';
