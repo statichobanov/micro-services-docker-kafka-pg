@@ -51,7 +51,7 @@ export class ApiGatewayController implements OnModuleInit {
   @ApiResponse({ status: 201, description: 'The product has been created successfully.', type: ProductModel })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @Post('product')
-  async handleCreateProduct(@Body() body: ProductModel): Promise<{ result: string }> {
+  async handleCreateProduct(@Body() body: ProductModel): Promise<ProductModel> {
     return await this.createProduct.run(body);
   }
 
@@ -62,7 +62,7 @@ export class ApiGatewayController implements OnModuleInit {
   @ApiResponse({ status: 200, description: 'Product updated successfully.' })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   @Put('product')
-  async handleUpdateProduct(@Body() body: ProductModel): Promise<ProductModel> {
+  async handleUpdateProduct(@Body() body: ProductModel): Promise<{ result: string }> {
     return await this.updateProduct.run(body);
   }
 
@@ -73,7 +73,7 @@ export class ApiGatewayController implements OnModuleInit {
   @ApiResponse({ status: 200, description: 'Product removed successfully.' })
   @ApiResponse({ status: 404, description: 'Product not found.' })
   @Delete('product')
-  async handleRemoveProduct(@Query() id: string): Promise<string> {
+  async handleRemoveProduct(@Query() id: string): Promise<{ result: string }> {
     return await this.removeProduct.run(id);
   }
 
@@ -83,8 +83,8 @@ export class ApiGatewayController implements OnModuleInit {
   @ApiResponse({ status: 200, description: 'User created successfully.', type: UserModel })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @Post('auth')
-  handleCreateUser(@Body() body: UserModel) {
-    return this.createUser.run(body);
+  async handleCreateUser(@Body() body: UserModel): Promise<UserModel> {
+    return await this.createUser.run(body);
   }
 
   @ApiTags('authentication')
@@ -93,8 +93,8 @@ export class ApiGatewayController implements OnModuleInit {
   @ApiResponse({ status: 200, description: 'User authenticated successfully.', type: Object })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @Post('auth/login')
-  handleAuthenticate(@Body() body: LoginModel) {
-    return this.authenticate.run(body);
+  async handleAuthenticate(@Body() body: LoginModel): Promise<{ token: string }> {
+    return await this.authenticate.run(body);
   }
 
   @ApiTags('order')
@@ -103,8 +103,8 @@ export class ApiGatewayController implements OnModuleInit {
   @ApiResponse({ status: 201, description: 'Order created successfully.', type: OrderModel })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @Post('order')
-  handleCreateOrder() {
-    return this.createOrder.run({});
+  async handleCreateOrder(): Promise<OrderModel> {
+    return await this.createOrder.run({});
   }
 
   async onModuleInit() {
