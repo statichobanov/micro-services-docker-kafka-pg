@@ -42,6 +42,10 @@ services:
     build:
       dockerfile: apps/authentication-service/Dockerfile
     container_name: authentication-service
+    environment:
+      NODE_OPTIONS: '--inspect=0.0.0.0:9229'
+    ports:
+      - '9229:9229'
     networks:
       - kafka-net
     depends_on:
@@ -52,6 +56,10 @@ services:
     build:
       dockerfile: apps/product-catalog-service/Dockerfile
     container_name: product-catalog-service
+    environment:
+      NODE_OPTIONS: '--inspect=0.0.0.0:9230'
+    ports:
+      - '9230:9230'
     networks:
       - kafka-net
     depends_on:
@@ -62,6 +70,10 @@ services:
     build:
       dockerfile: apps/order-service/Dockerfile
     container_name: order-service
+    environment:
+      NODE_OPTIONS: '--inspect=0.0.0.0:9231'
+    ports:
+      - '9231:9231'
     networks:
       - kafka-net
     depends_on:
@@ -72,8 +84,11 @@ services:
     build:
       dockerfile: apps/api-gateway/Dockerfile
     container_name: api-gateway
+    environment:
+      NODE_OPTIONS: '--inspect=0.0.0.0:9232'
     ports:
       - '3003:3003'
+      - '9232:9232'
     networks:
       - kafka-net
     depends_on:

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, OnModuleInit, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, OnModuleInit, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { GetProductCatalog } from '../../aplication/getProductCatalog.service';
 import { RemoveProduct } from '../../aplication/removeProduct.service';
 import { CreateProduct } from '../../aplication/createProduct.service';
@@ -10,6 +10,7 @@ import { CreateOrder } from '../../aplication/createOrder.service';
 import { ApiOperation, ApiTags, ApiResponse, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { LoginModel, OrderModel, ProductModel, UserModel } from '@ecommerce/models';
 import { CreateUser } from '../../aplication/createUser.service';
+import { AuthGuard } from '../guards/auth.guard';
 @Controller('')
 export class ApiGatewayController implements OnModuleInit {
   constructor(
@@ -43,6 +44,7 @@ export class ApiGatewayController implements OnModuleInit {
     return await this.getProductCatalog.run();
   }
 
+  @UseGuards(AuthGuard)
   @ApiTags('product')
   @ApiOperation({ summary: 'Create Product', description: 'Create a product.' })
   @ApiBody({ type: ProductModel })
@@ -53,6 +55,7 @@ export class ApiGatewayController implements OnModuleInit {
     return await this.createProduct.run(body);
   }
 
+  @UseGuards(AuthGuard)
   @ApiTags('product')
   @ApiOperation({ summary: 'Update Product', description: 'Update a product.' })
   @ApiBody({ type: ProductModel, description: 'The payload to update a product.' })
@@ -63,6 +66,7 @@ export class ApiGatewayController implements OnModuleInit {
     return await this.updateProduct.run(body);
   }
 
+  @UseGuards(AuthGuard)
   @ApiTags('product')
   @ApiOperation({ summary: 'Remove Product', description: 'Remove a product.' })
   @ApiQuery({ name: 'id', type: String, description: 'The ID of the product to retrieve.' })
