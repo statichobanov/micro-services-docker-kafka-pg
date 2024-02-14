@@ -1,4 +1,4 @@
-import { ProductModel, UserModel } from '@ecommerce/models';
+import { LoginModel, OrderModel, ProductModel, UserModel } from '@ecommerce/models';
 
 export interface ApiGatewayIRepository {
   getProductCatalog();
@@ -7,6 +7,6 @@ export interface ApiGatewayIRepository {
   createUser(user: UserModel);
   updateProduct(product: ProductModel);
   removeProduct(id: string);
-  authenticate(login);
-  createOrder(order);
+  authenticate(login: LoginModel);
+  createOrder(order: OrderModel);
 }

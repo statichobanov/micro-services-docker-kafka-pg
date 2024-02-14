@@ -11,6 +11,7 @@ import { User } from '@ecommerce/models';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CreateUser } from '../../aplication/createUser.service';
 import { VerifyToken } from '../../aplication/verifyToken.service';
+import { SaveOrder } from '../../aplication/saveOrder.service';
 
 @Module({
   imports: [
@@ -57,6 +58,13 @@ import { VerifyToken } from '../../aplication/verifyToken.service';
       provide: VerifyToken,
       useFactory(authenticationRepository: AuthenticationIRepository) {
         return new VerifyToken(authenticationRepository);
+      },
+      inject: [AuthenticationRepository],
+    },
+    {
+      provide: SaveOrder,
+      useFactory(authenticationRepository: AuthenticationIRepository) {
+        return new SaveOrder(authenticationRepository);
       },
       inject: [AuthenticationRepository],
     },

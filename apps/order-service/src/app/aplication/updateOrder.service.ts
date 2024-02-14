@@ -3,7 +3,7 @@ import { Product } from '@ecommerce/models';
 
 export class UpdateOrder {
   constructor(private orderRepository: OrderIRepository) {}
-  async run(product: Product) {
-    return this.orderRepository.updateOrder(product);
+  async run(product?: Product): Promise<void> {
+    return await this.orderRepository.updateOrder(product);
   }
 }

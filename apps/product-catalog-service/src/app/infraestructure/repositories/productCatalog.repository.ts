@@ -1,9 +1,10 @@
-import { Inject, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, NotFoundException } from '@nestjs/common';
 import { ProductCatalogIRepository } from '../../domain/productCatalog.i.repository';
 import { Product } from '@ecommerce/models';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientKafka } from '@nestjs/microservices';
+import { ErrorHandler } from '@ecommerce/error';
 
 export class ProductCatalogRepository implements ProductCatalogIRepository {
   constructor(
@@ -11,38 +12,59 @@ export class ProductCatalogRepository implements ProductCatalogIRepository {
     @InjectRepository(Product) private productsRepository: Repository<Product>
   ) {}
 
-  async getProduct(id: string) {
+  /**
+   * Retrieves a single product by its ID.
+   * @param id The ID of the product to retrieve.
+   * @returns The product.
+   * @throws NotFoundException if the product is not found.
+   */
+  async getProduct(id: string): Promise<Product> {
     try {
       const product = await this.productsRepository.findOneBy({ id: +id });
       if (product) {
-        return JSON.stringify(product);
+        return product;
       } else {
         throw new NotFoundException();
       }
     } catch (error) {
-      Logger.error(error);
+      ErrorHandler.handleError(error.message, error.errorCode, 'ProductCatalogRepository.getProduct()');
     }
   }
 
-  async getProductCatalog(): Promise<string> {
+  /**
+   * Retrieves the full product catalog.
+   * @returns The product catalog.
+   */
+  async getProductCatalog(): Promise<Product[]> {
     try {
       const products = await this.productsRepository.find();
-      return JSON.stringify(products);
+      return products;
     } catch (error) {
-      Logger.error(error);
+      ErrorHandler.handleError(error.message, error.errorCode, 'ProductCatalogRepository.getProductCatalog()');
     }
   }
 
-  async createProduct(product: Product) {
+  /**
+   * Creates a new product in the catalog.
+   * @param product The product to create.
+   * @returns The created product.
+   */
+  async createProduct(product: Product): Promise<Product> {
     try {
       const response = await this.productsRepository.save(product);
-      return JSON.stringify(response);
+      return response;
     } catch (error) {
-      Logger.error(error);
+      ErrorHandler.handleError(error.message, error.errorCode, 'ProductCatalogRepository.createProduct()');
     }
   }
 
-  async updateProduct(product: Product): Promise<string> {
+  /**
+   * Updates an existing product.
+   * @param product The product with updated information.
+   * @returns An object with the result.
+   * @throws NotFoundException if the update operation affects no rows.
+   */
+  async updateProduct(product: Product): Promise<{ result: string }> {
     try {
       const result = await this.productsRepository.update(product.id, product);
       if (result.affected > 0) {
@@ -51,26 +73,31 @@ export class ProductCatalogRepository implements ProductCatalogIRepository {
           data: product,
         });
         this.kafkaClient.emit('product-events', message);
-        return JSON.stringify({ result: 'ok' });
+        return { result: 'ok' };
       } else {
         throw new NotFoundException();
       }
     } catch (error) {
-      Logger.error(error);
+      ErrorHandler.handleError(error.message, error.errorCode, 'ProductCatalogRepository.updateProduct()');
     }
   }
 
-  async removeProduct(id: string): Promise<string> {
+  /**
+   * Removes a product from the catalog.
+   * @param id The ID of the product to remove.
+   * @returns An object with the result.
+   * @throws NotFoundException if the removal operation affects no rows.
+   */
+  async removeProduct(id: string): Promise<{ result: string }> {
     try {
       const result = await this.productsRepository.delete(id);
-      // TODO: Implements event to update order
       if (result.affected > 0) {
-        return JSON.stringify({ result: 'ok' });
+        return { result: 'ok' };
       } else {
         throw new NotFoundException();
       }
     } catch (error) {
-      Logger.error(error);
+      ErrorHandler.handleError(error.message, error.errorCode, 'ProductCatalogRepository.removeProduct()');
     }
   }
 }

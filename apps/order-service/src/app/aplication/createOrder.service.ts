@@ -3,7 +3,7 @@ import { Order } from '@ecommerce/models';
 
 export class CreateOrder {
   constructor(private orderRepository: OrderIRepository) {}
-  async run(order: Order) {
-    return this.orderRepository.createOrder(order);
+  async run(order: Order): Promise<Order> {
+    return await this.orderRepository.createOrder(order);
   }
 }
