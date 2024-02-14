@@ -103,8 +103,8 @@ export class ApiGatewayController implements OnModuleInit {
   @ApiResponse({ status: 201, description: 'Order created successfully.', type: OrderModel })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @Post('order')
-  async handleCreateOrder(): Promise<OrderModel> {
-    return await this.createOrder.run({});
+  async handleCreateOrder(@Body() body: OrderModel): Promise<OrderModel> {
+    return await this.createOrder.run(body);
   }
 
   async onModuleInit() {

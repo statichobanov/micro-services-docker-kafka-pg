@@ -3,7 +3,7 @@ import { ProductCatalogIRepository } from '../domain/productCatalog.i.repository
 
 export class UpdateProduct {
   constructor(private productCatalogRepository: ProductCatalogIRepository) {}
-  async run(product: Product) {
-    return this.productCatalogRepository.updateProduct(product);
+  async run(product: Product): Promise<{ result: string }> {
+    return await this.productCatalogRepository.updateProduct(product);
   }
 }
