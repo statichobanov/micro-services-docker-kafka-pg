@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default {
   displayName: 'product-catalog-service',
   preset: '../../jest.preset.js',
@@ -8,4 +7,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/apps/product-catalog-service',
+  roots: ['<rootDir>', '<rootDir>/../../tests/units/product-catalog-service'],
 };

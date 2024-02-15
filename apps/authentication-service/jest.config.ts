@@ -8,4 +8,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/apps/authentication-service',
+  roots: ['<rootDir>', '<rootDir>/../../tests/units/authentication-service'],
 };

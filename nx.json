@@ -38,6 +38,5 @@
   ],
   "cli": {
     "disableCloudCache": true
-  },
-  "nxCloudAccessToken": "YWY2ZWQwNGYtZDMzOC00YzU2LTg2ODktZWRiYmI5NDE2MWU0fHJlYWQtd3JpdGU="
+  }
 }

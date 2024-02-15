@@ -4,7 +4,7 @@ import { ClientKafka } from '@nestjs/microservices';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Login, Order, User } from '@ecommerce/models';
+import { Login, User } from '@ecommerce/models';
 import * as bcrypt from 'bcryptjs';
 import { jwtConstants } from '../controllers/auth.constants';
 import { ErrorHandler } from '@ecommerce/error';
@@ -61,21 +61,5 @@ export class AuthenticationRepository implements AuthenticationIRepository {
    */
   async verifyToken(token: string): Promise<Omit<User, 'password'>> {
     return await this.jwtService.verifyAsync(token, { secret: jwtConstants.secret });
-  }
-
-  /**
-   * Saves an order associated with a user.
-   * @param order Order object to be saved.
-   * @returns A Promise resolved when the order has been saved.
-   */
-  async saveOrder(order: Order): Promise<void> {
-    try {
-      const user = await this.userRepository.findOneBy({ id: order.user.id });
-      const orders = { ...user.orders };
-      orders.push(order);
-      await this.userRepository.update(user.id, { orders });
-    } catch (error) {
-      ErrorHandler.handleError(error.message, error.errorCode, 'AuthenticationRepository.saveOrder()');
-    }
   }
 }

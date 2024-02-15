@@ -8,7 +8,7 @@ export class OrderModel {
   @ApiProperty({ example: [], description: 'Order products list' })
   products: ProductModel[];
 
-  @ApiProperty({ example: 1, description: 'Product identifier' })
+  @ApiProperty({ example: '2023-10-04', description: 'Product identifier' })
   date: Date;
 
   @ApiProperty({ example: 1, description: 'Product identifier' })
