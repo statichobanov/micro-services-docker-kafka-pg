@@ -1,6 +1,6 @@
-# Yara API Documentation
+# Brief Description
 
-This documentation provides information about the endpoints available in the Yara Assignment API.
+Microservices architecture, each service is implemented using Node.js and TypeScript, following the principles of clean architecture. Requests from clients are directed to an API gateway, which serves as the central entry point for the system.
 
 # Local Deployment
 
